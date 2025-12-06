@@ -1,4 +1,4 @@
-<img width="3999" height="1740" alt="image" src="https://github.com/user-attachments/assets/3b0f4ad6-6b5d-4191-9ac6-604d1e52d5d9" /># 🧠 Supervised Learning: The "Teacher" Method
+🧠 Supervised Learning: The "Teacher" Method
 
 ## The Core Concept:
 **Supervised Learning** is like teaching a child with flashcards. You show the computer data (the flashcard) and tell it the **correct answer (the label)**. By seeing enough examples, the computer learns to recognize the patterns on its own.
@@ -80,3 +80,5 @@ Getting the model to learn just right is the hardest part.
     * *Concept*: Punishing the model if it gets too complex. It forces the model to choose simpler explanations, which usually prevents Overfitting.
     * **L1 Regularization**: Can shrink less important features to zero (removes them).
     * **L2 Regularization**: Shrinks features to be very small but keeps them (reduces their impact).
+
+
