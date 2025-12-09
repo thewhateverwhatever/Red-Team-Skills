@@ -230,3 +230,90 @@ For Logistic Regression to work best, check these requirements:
 2.  **Linearity of Log Odds:** The relationship between features and the *log-odds* of the outcome is linear.
 3.  **No Multicollinearity:** The input variables (predictors) should not be highly correlated with each other (e.g., don't use "Age in Years" and "Age in Months" as two separate inputs).
 4.  **Large Sample Size:** Generally requires more data than simple linear regression to be reliable.
+
+
+
+# 🌳 Decision Trees: Quick Reference Notes
+
+## 1. Core Concept
+**Decision Trees** are a supervised learning algorithm used for both **Classification** (Categories) and **Regression** (Numbers).
+
+* **The Logic:** It works like a flowchart or a game of "20 Questions." It breaks data down by asking a series of Yes/No (or True/False) questions to reach a conclusion.
+* **The Goal:** Create a model that predicts a target value by learning simple decision rules from data features.
+
+
+
+---
+
+## 2. Anatomy of the Tree
+A tree consists of three specific types of "nodes":
+
+1.  **Root Node:** The starting point. It contains the entire dataset before any splitting happens.
+2.  **Internal Nodes:** The "Decision Points." These represent a specific feature (e.g., "Is it raining?"). They branch out into two or more directions.
+3.  **Leaf Nodes:** The "Answer." These are the endpoints that hold the final prediction (e.g., "Play Tennis" or "Don't Play").
+
+---
+
+## 3. How the Model Builds (The Math)
+The tree needs to decide **which question to ask first** (and second, and third...). It chooses the question that best separates the data into "pure" groups.
+
+It uses one of these three metrics to make that choice:
+
+### A. Gini Impurity
+Measures the probability of being wrong if you picked a random label.
+* **Goal:** Lower is better (0 = Perfectly Pure).
+* **Formula:**
+    $$Gini(S) = 1 - \sum (p_i)^2$$
+    *(Where $p_i$ is the probability of a specific class).*
+
+### B. Entropy
+Measures the "disorder" or chaos in the set.
+* **Goal:** Lower is better (Low Entropy = High Order).
+* **Formula:**
+    $$Entropy(S) = - \sum p_i \cdot \log_2(p_i)$$
+
+
+
+### C. Information Gain
+Measures how much "Information" we gained by splitting the data on a specific feature.
+* **Goal:** Higher is better.
+* **Logic:** It compares the Entropy *before* the split to the weighted Entropy *after* the split. The difference is the "Gain."
+    $$Gain = Entropy(Parent) - Weighted Average Entropy(Children)$$
+
+---
+
+## 4. The "Play Tennis" Example
+Imagine predicting if we should play tennis based on weather.
+
+**The Dataset:**
+* **Features:** Outlook (Sunny/Overcast/Rainy), Temp, Humidity, Wind.
+* **Target:** Play Tennis (Yes/No).
+
+**The Process:**
+1.  **Root:** The algorithm checks all features. It finds that **Outlook** gives the highest Information Gain.
+2.  **Split 1:** It splits the data into three branches: Sunny, Overcast, Rainy.
+3.  **Recursive Step:**
+    * If **Overcast** $\rightarrow$ It sees all examples are "Yes." It creates a Leaf Node (Yes).
+    * If **Sunny** $\rightarrow$ It's mixed. It looks for the next best feature (e.g., Humidity) and splits again.
+    * If **Rainy** $\rightarrow$ It's mixed. It looks for the next best feature (e.g., Wind) and splits again.
+
+
+
+---
+
+## 5. Stopping the Tree
+If we don't stop it, the tree will grow until every single data point has its own leaf (Overfitting). We use **Stopping Criteria**:
+
+* **Max Depth:** Limit how many "layers" the tree can have.
+* **Min Samples:** Don't split a node if it has too few data points (e.g., less than 5).
+* **Pure Nodes:** Stop if a node contains only one class (100% accuracy for that group).
+
+---
+
+## 6. Key Advantages (Assumptions)
+Decision trees are very flexible compared to Linear/Logistic Regression.
+
+1.  **No Linearity Assumption:** Can handle complex, non-linear relationships.
+2.  **No Normality Assumption:** Data does not need to be a Bell Curve.
+3.  **Handles Outliers:** Outliers generally don't break the model because the tree splits based on thresholds/values, not average distances.
+4.  **Interpretability:** You can literally visualize the logic (White Box model).
