@@ -185,3 +185,107 @@ We use a parameter called **Epsilon ($\epsilon$)** to decide.
 
 1.  **Markov Property:** The history doesn't matter. The decision depends *only* on where you are right now (State), not how you got there.
 2.  **Stationary Environment:** The rules of the game don't change while you are playing (e.g., "North" always moves you Up).
+
+
+# SARSA (The "Cautious" Learner)
+
+**Definition:** SARSA (**S**tate-**A**ction-**R**eward-**S**tate-**A**ction) is a **Model-Free** Reinforcement Learning algorithm.
+
+**The Core Difference:**
+* **Q-Learning (Off-Policy):** The "Optimist." When learning, it assumes that in the *next* step, it will take the *best possible* action (even if it's currently exploring randomly). It learns the "perfect" path, ignoring the risks of exploration.
+* **SARSA (On-Policy):** The "Realist." It learns based on the action it *actually* plans to take next (including any random slips or exploration). It learns the "safe" path that accounts for its own behavior.
+
+> **Analogy: The Cliff Walk**
+> Imagine walking along a narrow path on a cliff edge.
+> * **Q-Learning:** Walks right on the edge because that is the shortest path. It assumes "I will never trip." (Optimal but risky).
+> * **SARSA:** Walks a few feet away from the edge. It realizes "I might trip or take a random step (exploration), so I better stay safe." (Safer but slightly longer).
+
+---
+
+## 1. The Name: S-A-R-S-A
+
+The name comes from the sequence of data the algorithm uses in one loop:
+1.  **S:** Current **State**.
+2.  **A:** Current **Action**.
+3.  **R:** **Reward** received.
+4.  **S':** Next **State**.
+5.  **A':** Next **Action**.
+
+---
+
+## 2. The Math: The Update Rule
+
+$$Q(s, a) \leftarrow Q(s, a) + \alpha \cdot [r + \gamma \cdot Q(s', a') - Q(s, a)]$$
+
+**Compare this to Q-Learning:**
+* *Q-Learning:* Uses $\max(Q(s', a'))$ -> "The best possible future action."
+* *SARSA:* Uses $Q(s', a')$ -> "The actual action I am going to take next."
+
+**Variables:**
+* $Q(s, a)$: Current value.
+* $\alpha$ (**Alpha**): Learning Rate.
+* $r$: Reward.
+* $\gamma$ (**Gamma**): Discount Factor.
+* $Q(s', a')$: The value of the *actual* next move.
+
+---
+
+## 3. The Algorithm Loop
+
+1.  **Initialize:** Create a Q-Table full of zeros.
+2.  **Choose:** Pick an action **$A$** for state **$S$** (using $\epsilon$-greedy).
+3.  **Act:** Do action **$A$**.
+4.  **Observe:** See the reward **$R$** and the new state **$S'$**.
+5.  **Choose Next:** Pick the next action **$A'$** for state **$S'$** (using $\epsilon$-greedy) **before updating**.
+6.  **Update:** Use the formula above with $S, A, R, S', A'$.
+7.  **Shift:** Current State becomes $S'$, Current Action becomes $A'$.
+8.  **Repeat.**
+
+---
+
+## 4. On-Policy vs. Off-Policy
+
+This is the most critical concept to understand about SARSA.
+
+| Feature | SARSA (On-Policy) | Q-Learning (Off-Policy) |
+| :--- | :--- | :--- |
+| **Learning Source** | Learns from the **Current Policy** (including mistakes/exploration). | Learns from the **Optimal Policy** (ignoring mistakes/exploration). |
+| **Behavior** | **Conservative / Safe.** Avoids penalties that might happen during exploration. | **Aggressive / Optimal.** Finds the fastest path, assuming perfect play. |
+| **Use Case** | Robots, physical machinery, or high-risk scenarios where "learning the hard way" is dangerous. | Simulations or games where crashing doesn't cost money. |
+
+---
+
+## 5. Exploration Strategies
+
+How does SARSA pick actions?
+
+### A. Epsilon-Greedy ($\epsilon$-Greedy)
+* **Method:** Roll a die. Small chance ($\epsilon$) to pick a random action; otherwise, pick the best one.
+* **SARSA Effect:** Because SARSA knows it might pick a random action next, it naturally stays away from "dangerous" states (like the cliff edge) where a random move would be catastrophic.
+
+### B. Softmax
+* **Method:** Assign probabilities based on values. Better actions have higher probabilities, but bad actions still have *some* chance.
+* **SARSA Effect:** Leads to smoother learning than strict Epsilon-Greedy.
+
+---
+
+## 6. Convergence & Tuning
+
+To make SARSA work, you need to tune two main knobs:
+
+1.  **Learning Rate ($\alpha$):**
+    * *High:* Learns fast but jitters (unstable).
+    * *Low:* Stable but learns slowly.
+2.  **Discount Factor ($\gamma$):**
+    * *High (near 1):* Cares about long-term safety.
+    * *Low (near 0):* Cares only about immediate rewards.
+
+**Convergence Condition:**
+SARSA will eventually find the optimal policy, **IF** you slowly decrease the exploration rate ($\epsilon$) to zero over time. This turns it from a "learner" into a "master."
+
+---
+
+## 7. Data Assumptions
+
+1.  **Markov Property:** The future depends only on the present state, not the past.
+2.  **Stationary Environment:** The rules (physics/rewards) don't change while learning.
