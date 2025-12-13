@@ -389,3 +389,95 @@ A "Cat" is a "Cat" whether it is in the top-left corner or the bottom-right corn
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/119b7b22-b505-4e86-a223-db202b671f62" />
 
 
+# Recurrent Neural Networks (RNNs) (The "Time Traveler")
+
+**Definition:** RNNs are a class of neural networks designed for **Sequential Data** (where order matters).
+* *Examples:* Sentences (Word order matters), Stock Prices (Time matters), Audio (Sequence matters).
+
+**The Core Difference:**
+* **Feedforward Networks (Standard):** Process data in one pass. They have **no memory**. (e.g., They don't know that the photo of a "Dog" they just saw is related to the photo of a "Bone" they are seeing now).
+* **RNNs:** Have a **Loop**. They pass information from the previous step to the current step. They have **Memory**.
+
+> **Analogy: Reading a Book**
+> * **Feedforward:** Reads every word in isolation. "The", "Cat", "Sat". It doesn't know who sat because it forgot "The Cat" by the time it read "Sat".
+> * **RNN:** Reads like a human. It remembers "The Cat" while reading "Sat", so it understands the full context.
+
+---
+
+## 1. How It Works: The "Hidden State"
+
+The RNN processes a sequence one step at a time. It keeps a **Hidden State** ($h$)—this is its short-term memory.
+
+### The Repeating Module
+At every time step $t$, the RNN takes **two** inputs:
+1.  **Current Input ($x_t$):** The new data (e.g., the current word).
+2.  **Previous Hidden State ($h_{t-1}$):** The memory from the last step.
+
+It produces **two** outputs:
+1.  **Prediction ($y_t$):** The output for this step.
+2.  **New Hidden State ($h_t$):** The updated memory to pass to the next step.
+
+
+
+### Example: "The cat sat on the mat."
+1.  **Input:** "The" $\rightarrow$ Update memory.
+2.  **Input:** "cat" + (Memory of "The") $\rightarrow$ Update memory.
+3.  **Input:** "sat" + (Memory of "The cat") $\rightarrow$ Update memory.
+4.  *Result:* By the time it reaches "mat", the memory contains the "story" of the whole sentence.
+
+<img width="540" height="233" alt="image" src="https://github.com/user-attachments/assets/514ef007-1548-4bae-b6c0-d2aace30690c" />
+
+---
+
+## 2. The Big Problem: Vanishing Gradient
+
+RNNs are great in theory, but in practice, they struggle with long sequences.
+
+### The Issue
+When training, we use **Backpropagation Through Time (BPTT)**. The error signal has to travel back from the end of the sentence to the beginning.
+* **Math Reality:** The gradients (signals) are often small numbers ($< 1$).
+* **Effect:** When you multiply small numbers repeatedly (e.g., $0.1 \times 0.1 \times 0.1 \dots$), they essentially become **Zero**.
+* **Result:** The network **forgets** the beginning of the sequence. It can't learn that "The **man** who called me yesterday... is **tall**" because the gap between "man" and "tall" is too big.
+
+---
+
+## 3. The Solution: Advanced Architectures (LSTM & GRU)
+
+To fix the memory loss, scientists invented "Smart Memory" cells that can choose what to keep and what to delete.
+
+### A. LSTM (Long Short-Term Memory)
+The heavy-duty solution. It uses **Gates** to control information flow.
+* **Input Gate:** "Should I save this new info?"
+* **Forget Gate:** "Should I delete this old info?" (Crucial for clearing irrelevant context).
+* **Output Gate:** "What should I show to the next step?"
+
+
+
+### B. GRU (Gated Recurrent Unit)
+The lighter, faster cousin of LSTM.
+* **Simpler:** Only 2 gates (**Update** and **Reset**).
+   * **Update:** Controls how much of the previous hidden state is retained.
+   * **Reset:** Determines how much of the previous hidden state is combined with the current input.
+* **Performance:** Often just as good as LSTM but faster to train.
+
+| Feature | LSTM | GRU |
+| :--- | :--- | :--- |
+| **Complexity** | High (3 Gates) | Medium (2 Gates) |
+| **Speed** | Slower | Faster |
+| **Memory** | Excellent long-term | Good long-term |
+
+<img width="800" height="401" alt="image" src="https://github.com/user-attachments/assets/ba7fb1cc-6837-4102-bdb7-8db38795ea52" />
+
+
+---
+
+## 4. Bidirectional RNNs (Seeing the Future)
+
+Standard RNNs only look **Backwards** (Left-to-Right).
+* *Problem:* In the sentence "He said **'Teddy'** bears are cute," seeing "Teddy" isn't enough to know if it's a person or a toy. You need to see "bears" (future context).
+
+**Bidirectional RNNs:**
+* Train **two** separate RNNs.
+    1.  One reads Left $\rightarrow$ Right.
+    2.  One reads Right $\rightarrow$ Left.
+* **Result:** The network sees the whole context (Past + Future) at every single step.
