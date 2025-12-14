@@ -1,5 +1,5 @@
 
-````markdown
+
 # 🐍 Miniconda & Environment Setup (The "Starter Kit")
 
 **Definition:** Miniconda is a **minimal installer** for Python.
