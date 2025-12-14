@@ -1,5 +1,4 @@
 
-````markdown
 # 🪐 JupyterLab (The Interactive Data Lab)
 
 **Definition:** JupyterLab is a web-based **Interactive Development Environment (IDE)**.
